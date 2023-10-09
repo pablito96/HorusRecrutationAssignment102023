@@ -8,8 +8,7 @@ public class Main {
 
         log.info("Wall test");
 
-        Wall wall = new Wall();
-        wall.assignTestValues();
+        Wall wall = Wall.getTestInstance();
 
         log.info("Count {}", wall.count());
 

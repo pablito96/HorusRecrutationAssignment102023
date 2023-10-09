@@ -45,13 +45,16 @@ interface CompositeBlock extends Block {
 public class Wall implements Structure {
     private List<Block> blocks;
 
-    public void assignTestValues(){
-        blocks = new ArrayList<>();
+
+    public static Wall getTestInstance(){
+        List<Block> blocks = new ArrayList<>();
 
         blocks.add(new BlockImpl("Red", "Glass"));
         blocks.add(new BlockImpl("Blue", "Concrete"));
 
         blocks.add(new CompositeBlockImpl("Green", "Paper", 5));
+
+        return new Wall(blocks);
     }
 
     @Override
@@ -73,42 +76,41 @@ public class Wall implements Structure {
         return blocks.stream().flatMap(b->blockUtils.toFlatMap(b));
     }
 
+}
+
+//////////////////////////////////////////////////////////
+/////////////////// other classes ///////////////////////
+////////////////////////////////////////////////////////
+class blockUtils{
+    static Stream<Block> toFlatMap(Block b){
+        if(b instanceof CompositeBlockImpl) return ((CompositeBlockImpl) b).getBlocks().stream();
+        return Stream.of(b);
+    }
+}
+
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+class BlockImpl implements Block{
+    protected String color;
+    protected String material;
+}
 
 
-    //////////////////////////////////////////////////////////
-    /////////////////// private classes /////////////////////
-    ////////////////////////////////////////////////////////
-    private static class blockUtils{
-        static Stream<Block> toFlatMap(Block b){
-            if(b instanceof CompositeBlockImpl) return ((CompositeBlockImpl) b).getBlocks().stream();
-            return Stream.of(b);
+@Getter
+class CompositeBlockImpl extends BlockImpl implements CompositeBlock {
+    private List<Block> blocks;
+
+    CompositeBlockImpl(String color, String material, int size){
+        this.color = color;
+        this.material= material;
+
+        List<Block> blocks = new ArrayList<>();
+        for(int i=0; i<size; i++){
+            blocks.add(new BlockImpl(color,material));
         }
+        this.blocks=blocks;
     }
 
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    private class BlockImpl implements Block{
-        protected String color;
-        protected String material;
-    }
-
-
-    @Getter
-    private class CompositeBlockImpl extends BlockImpl implements CompositeBlock {
-        private List<Block> blocks;
-
-        CompositeBlockImpl(String color, String material, int size){
-            this.color = color;
-            this.material= material;
-
-            List<Block> blocks = new ArrayList<>();
-            for(int i=0; i<size; i++){
-                blocks.add(new BlockImpl(color,material));
-            }
-            this.blocks=blocks;
-        }
-
-    }
 }
 
