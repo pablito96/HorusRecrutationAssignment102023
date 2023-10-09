@@ -56,7 +56,7 @@ public class Wall implements Structure {
 
     @Override
     public Optional<Block> findBlockByColor(String color) {
-        return blocks.stream().flatMap(b->blockUtils.toFlatMap(b)).filter(b->b.getColor().equals(color)).findAny();
+        return getBlocksFlatStream().filter(b->b.getColor().equals(color)).findAny();
     }
 
     @Override
